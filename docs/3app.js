@@ -12,10 +12,9 @@ function uploadImage() {
     let formData = new FormData();
     formData.append('image', file);
 
-    fetch('https://vegetable-classifier-4975.onrender.com/predict', {
-  // Replace with your deployed backend URL
-        method: 'POST',
-        body: formData
+    fetch('https://vegetable-classifier-lhm2.onrender.com/predict', {
+    method: 'POST',
+    body: formData
     })
     .then(res => res.json())
     .then(data => {
