@@ -10,13 +10,16 @@ CORS(app)
 
 # --- Model setup ---
 MODEL_PATH = "best_model_ema.pth"
-DRIVE_FILE_ID = "YOUR_FILE_ID"  # Replace with your actual Google Drive file ID
+
+# Google Drive file ID for your model
+DRIVE_FILE_ID = "18plKhXwLZQCeit5yW6aEQ2XdCCoKs1xD"
 MODEL_URL = f"https://drive.google.com/uc?id={DRIVE_FILE_ID}"
 
-# Download model if it doesn't exist
+# Download model if not already present
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from Google Drive...")
     gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+    print("Download completed.")
 
 # Load model
 model = VegetableModel(MODEL_PATH, "labels.json")
@@ -31,12 +34,11 @@ def home():
 def predict():
     if "image" not in request.files:
         return jsonify({"error": "No image provided"}), 400
-    
-    image_file = request.files["image"]
-    result = model.predict(image_file)
-    return jsonify(result)
 
-# --- Run app ---
+    img_file = request.files["image"]
+    label, confidence = model.predict(img_file)
+    return jsonify({"label": label, "confidence": confidence})
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
